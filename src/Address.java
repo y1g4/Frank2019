@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -6,10 +9,12 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
 import java.lang.NullPointerException;
-//import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.lang.NullPointerException;
+import java.net.Socket;
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
+
+
 public class Address extends javax.swing.JFrame {
 
     Connection con; //establish connection
@@ -24,9 +29,16 @@ public class Address extends javax.swing.JFrame {
   Boolean bnext = false;
   Boolean bprevious = true;
   
+  ObjectOutputStream clientObjectStreamWriter;
+  ObjectInputStream clientObjectStreamReader, isReader;
+  
+  Socket sock;
+  
+  Address_SC SerialObj;
+  
     public Address() {
         initComponents();
-        
+        go();
         con = null;
     st = null;
     statement = null;
@@ -35,6 +47,58 @@ public class Address extends javax.swing.JFrame {
     user = "root";
     password = "peacebewithyouall2020";
     }
+
+    
+    public void go() {
+        try{
+            
+            sock = new Socket("127.0.0.1",50000);
+        SerialObj = new Address_SC();
+        
+        clientObjectStreamWriter = new ObjectOutputStream(sock.getOutputStream());
+        clientObjectStreamReader = new ObjectInputStream(sock.getInputStream());
+        System.out.println("networking established");
+        
+        Thread t = new Thread((Runnable) new ClientRunnable());
+
+	t.start();
+	System.out.println("got a connection");
+        }
+        catch(java.net.ConnectException e){
+            JOptionPane.showMessageDialog(null,"CONNECTION REFUSED!! SERVER DOWN MAYBE");
+            System.exit(0);
+                 } catch (IOException ex) {
+       
+    }
+    }
+    
+    public class ClientRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            try{
+                while((SerialObj =  (Address_SC)clientObjectStreamReader.readObject()) != null ){
+                    
+                   txtAddressID.setText(SerialObj.ADID);
+                    txtDistrict.setText(SerialObj.DIS);
+                    
+                    
+                    
+                    
+                    
+                    go();
+                }
+            }
+             catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+            catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+        }
+        
+    }
+    
 
    
     @SuppressWarnings("unchecked")
@@ -186,9 +250,8 @@ public class Address extends javax.swing.JFrame {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
      
-       
-        
-String s2 =  txtAddressID.getText();
+         
+        String s2 =  txtAddressID.getText();
 String s3 =  txtDistrict.getText();
 
 try {
@@ -231,6 +294,9 @@ finally{
                 ex.printStackTrace();
                 }
     }
+
+        
+        
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -544,7 +610,7 @@ else if(answer == NO_OPTION){
     /**
      * @param args the command line arguments
      */
-    public static void address() {
+    public static void main(String []args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

@@ -46,18 +46,26 @@ Connection con; //establish connection
         btnlogin = new javax.swing.JButton();
         signupbtn = new javax.swing.JButton();
         checkpass = new javax.swing.JCheckBox();
+        kGradientPanel1 = new keeptoo.KGradientPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setBackground(new java.awt.Color(163, 161, 63));
+        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblusername.setFont(new java.awt.Font("DejaVu Serif", 1, 24)); // NOI18N
+        lblusername.setForeground(java.awt.Color.black);
         lblusername.setText("Username");
+        getContentPane().add(lblusername, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 70, -1, 64));
 
         lblpassword.setFont(new java.awt.Font("DejaVu Serif", 1, 24)); // NOI18N
         lblpassword.setText("Password");
+        getContentPane().add(lblpassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(24, 174, 140, 68));
 
         txtpassword.setFont(new java.awt.Font("DejaVu Serif", 0, 24)); // NOI18N
+        getContentPane().add(txtpassword, new org.netbeans.lib.awtextra.AbsoluteConstraints(221, 175, 219, 68));
 
         txtusername.setFont(new java.awt.Font("DejaVu Serif", 1, 24)); // NOI18N
+        getContentPane().add(txtusername, new org.netbeans.lib.awtextra.AbsoluteConstraints(220, 70, 219, 64));
 
         btnlogin.setFont(new java.awt.Font("DejaVu Serif", 1, 24)); // NOI18N
         btnlogin.setText("Login");
@@ -66,6 +74,7 @@ Connection con; //establish connection
                 btnloginActionPerformed(evt);
             }
         });
+        getContentPane().add(btnlogin, new org.netbeans.lib.awtextra.AbsoluteConstraints(109, 325, 125, 47));
 
         signupbtn.setFont(new java.awt.Font("DejaVu Serif", 1, 24)); // NOI18N
         signupbtn.setText("Sign up");
@@ -74,6 +83,7 @@ Connection con; //establish connection
                 signupbtnActionPerformed(evt);
             }
         });
+        getContentPane().add(signupbtn, new org.netbeans.lib.awtextra.AbsoluteConstraints(303, 325, 137, 47));
 
         checkpass.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
         checkpass.setText("Check Password");
@@ -82,52 +92,24 @@ Connection con; //establish connection
                 checkpassActionPerformed(evt);
             }
         });
+        getContentPane().add(checkpass, new org.netbeans.lib.awtextra.AbsoluteConstraints(191, 281, -1, -1));
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(24, 24, 24)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblusername))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 57, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtusername, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(69, 69, 69)
-                        .addComponent(signupbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(54, 54, 54))
-            .addGroup(layout.createSequentialGroup()
-                .addGap(191, 191, 191)
-                .addComponent(checkpass)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        kGradientPanel1.setForeground(new java.awt.Color(24, 123, 240));
+        kGradientPanel1.setkEndColor(java.awt.Color.white);
+        kGradientPanel1.setkStartColor(java.awt.Color.blue);
+
+        javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
+        kGradientPanel1.setLayout(kGradientPanel1Layout);
+        kGradientPanel1Layout.setHorizontalGroup(
+            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 500, Short.MAX_VALUE)
         );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtusername, javax.swing.GroupLayout.DEFAULT_SIZE, 64, Short.MAX_VALUE)
-                    .addComponent(lblusername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(40, 40, 40)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblpassword, javax.swing.GroupLayout.PREFERRED_SIZE, 68, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
-                .addComponent(checkpass)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(signupbtn, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnlogin, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(21, 21, 21))
+        kGradientPanel1Layout.setVerticalGroup(
+            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 390, Short.MAX_VALUE)
         );
+
+        getContentPane().add(kGradientPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 500, 390));
 
         pack();
         setLocationRelativeTo(null);
@@ -220,7 +202,7 @@ finally{
            txtusername.requestFocus();
            
            dispose();
-          new Main_page().Main();
+         // new Main_page().Main();
            
            
 
@@ -311,6 +293,7 @@ finally{
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnlogin;
     private javax.swing.JCheckBox checkpass;
+    private keeptoo.KGradientPanel kGradientPanel1;
     private javax.swing.JLabel lblpassword;
     private javax.swing.JLabel lblusername;
     private javax.swing.JButton signupbtn;

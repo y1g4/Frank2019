@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,8 +11,14 @@ import javax.swing.JOptionPane;
 import java.lang.NullPointerException;
 //import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.lang.NullPointerException;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
+
+
+
 public class Department extends javax.swing.JFrame {
 Connection con; //establish connection
   PreparedStatement statement; //execute sql statement more of optimised
@@ -22,7 +31,16 @@ Connection con; //establish connection
   String records;
   Boolean bnext = false;
   Boolean bprevious = true;
+  
+   ObjectOutputStream clientObjectStreamWriter;
+  ObjectInputStream clientObjectStreamReader, isReader;
+  
+  Socket sock;
+  
+  Department_SC SerialObj;
+  
     public Department() {
+        go();
         initComponents();
          con = null;
     st = null;
@@ -32,6 +50,56 @@ Connection con; //establish connection
     user = "root";
     password = "peacebewithyouall2020";
     }
+    public void go() {
+        try{
+            
+            sock = new Socket("127.0.0.1",50000);
+        SerialObj = new Department_SC();
+        
+        clientObjectStreamWriter = new ObjectOutputStream(sock.getOutputStream());
+        clientObjectStreamReader = new ObjectInputStream(sock.getInputStream());
+        System.out.println("networking established");
+        
+        Thread t = new Thread((Runnable) new ClientRunnable());
+
+	t.start();
+	System.out.println("got a connection");
+        }
+        catch(java.net.ConnectException e){
+            JOptionPane.showMessageDialog(null,"CONNECTION REFUSED!! SERVER DOWN MAYBE");
+            System.exit(0);
+                 } catch (IOException ex) {
+        Logger.getLogger(Department.class.getName()).log(Level.SEVERE, null, ex);
+    }
+    }
+    
+    public class ClientRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            try{
+                while((SerialObj =  (Department_SC)clientObjectStreamReader.readObject()) != null ){
+                    
+                    txtDepartment_ID.setText(SerialObj.Dep_ID);
+                    txtDepartment_Name.setText(SerialObj. Dep_Name);
+                    txtFaculty_ID.setText(SerialObj.Fac_ID);
+                    
+                    
+                    
+                    go();
+                }
+            }
+             catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+            catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+        }
+        
+    }
+    
+    
 
   
     @SuppressWarnings("unchecked")
@@ -63,7 +131,7 @@ Connection con; //establish connection
 
         lblDepartment_Name.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
         lblDepartment_Name.setText("Department Name");
-        getContentPane().add(lblDepartment_Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 176, 139, 62));
+        getContentPane().add(lblDepartment_Name, new org.netbeans.lib.awtextra.AbsoluteConstraints(28, 176, 220, 62));
 
         lblFaculty_ID.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
         lblFaculty_ID.setText("Faculty ID");
@@ -198,9 +266,9 @@ Connection con; //establish connection
     private void SavebtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SavebtnActionPerformed
         // TODO add your handling code here:
         
-String s1 =  txtDepartment_ID.getText();
-String s2 =  txtDepartment_Name.getText();
-String s3 =  txtFaculty_ID.getText();
+       String s1 =  txtDepartment_ID.getText();
+     String s2 =  txtDepartment_Name.getText();
+     String s3 =  txtFaculty_ID.getText();
 
 
 try {
@@ -219,14 +287,14 @@ try {
     
      
      txtDepartment_ID.requestFocus();  //setting focus on REGNO   
-}
-catch (SQLException ex){
-    ex.printStackTrace();//displays information about SQL statement incase you typed table name or field name that is not existing
-    //it displays where the error may be
-}
-catch (ClassNotFoundException e){
+}catch (ClassNotFoundException e){
   e.printStackTrace();  //checks if the driver  is not configured
-}
+}       catch (SQLException ex) {
+            Logger.getLogger(Department_Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //displays information about SQL statement incase you typed table name or field name that is not existing
+        //it displays where the error may be
+        
 
 finally{
     
@@ -244,6 +312,7 @@ finally{
                 }
     }
 
+        
     }//GEN-LAST:event_SavebtnActionPerformed
 
     private void txtDepartment_NameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtDepartment_NameActionPerformed
@@ -326,12 +395,7 @@ finally{
        txtFaculty_ID.setText(rs.getString("Faculty_Faculty_id"));
        
     }
-    else{
-        JOptionPane.showMessageDialog(null,"Record not found");
-        txtDepartment_ID.setText("");
-        txtDepartment_ID.requestFocus();
-    }
-    
+   
     
        
 }
@@ -566,7 +630,7 @@ else if(answer == NO_OPTION){
     /**
      * @param args the command line arguments
      */
-    public static void department() {
+    public static void main(String []args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

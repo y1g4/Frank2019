@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,6 +11,9 @@ import javax.swing.JOptionPane;
 import java.lang.NullPointerException;
 //import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.lang.NullPointerException;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 public class Program extends javax.swing.JFrame {
@@ -23,7 +29,15 @@ public class Program extends javax.swing.JFrame {
   String records;
   Boolean bnext = false;
   Boolean bprevious = true;
+  
+   ObjectOutputStream clientObjectStreamWriter;
+  ObjectInputStream clientObjectStreamReader, isReader;
+  
+  Socket sock;
+  
+  Program_SC SerialObj;
     public Program() {
+        go();
         initComponents();
         
           con = null;
@@ -33,6 +47,56 @@ public class Program extends javax.swing.JFrame {
     cs = "jdbc:mysql://localhost:3306/admission";
     user = "root";
     password = "peacebewithyouall2020";
+    }
+    
+    public void go() {
+        try{
+            
+            sock = new Socket("127.0.0.1",50000);
+        SerialObj = new Program_SC();
+        
+        clientObjectStreamWriter = new ObjectOutputStream(sock.getOutputStream());
+        clientObjectStreamReader = new ObjectInputStream(sock.getInputStream());
+        System.out.println("networking established");
+        
+        Thread t = new Thread((Runnable) new ClientRunnable());
+
+	t.start();
+	System.out.println("got a connection");
+        }
+        catch(java.net.ConnectException e){
+            JOptionPane.showMessageDialog(null,"CONNECTION REFUSED!! SERVER DOWN MAYBE");
+            System.exit(0);
+                 } catch (IOException ex) {
+       
+    }
+    }
+    
+    
+     public class ClientRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            try{
+                while((SerialObj =  (Program_SC)clientObjectStreamReader.readObject()) != null ){
+                    
+                    txtProgram_ID.setText(SerialObj.ProgID);
+                    txtProgramName.setText(SerialObj.ProgName);
+                    txtDepartmentID.setText(SerialObj.DepID);
+                    
+                    
+                    
+                    go();
+                }
+            }
+             catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+            catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+        }
+        
     }
 
     /**
@@ -178,7 +242,7 @@ public class Program extends javax.swing.JFrame {
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(kGradientPanel1Layout.createSequentialGroup()
                 .addComponent(jButton1)
-                .addGap(0, 650, Short.MAX_VALUE))
+                .addGap(0, 680, Short.MAX_VALUE))
         );
         kGradientPanel1Layout.setVerticalGroup(
             kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -187,7 +251,7 @@ public class Program extends javax.swing.JFrame {
                 .addGap(0, 462, Short.MAX_VALUE))
         );
 
-        getContentPane().add(kGradientPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 670, 490));
+        getContentPane().add(kGradientPanel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 0, 700, 490));
 
         pack();
         setLocationRelativeTo(null);
@@ -195,8 +259,8 @@ public class Program extends javax.swing.JFrame {
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
-        
-String s1 =  txtProgram_ID.getText();
+         
+          String s1 =  txtProgram_ID.getText();
 String s2 =  txtProgramName.getText();
 String s3 =  txtDepartmentID.getText();
 
@@ -242,6 +306,8 @@ finally{
                 ex.printStackTrace();
                 }
     }
+
+        
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -458,6 +524,54 @@ finally{
 
     private void PreviousbtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PreviousbtnActionPerformed
         // TODO add your handling code here:
+        
+        try {
+    
+    Class.forName("com.mysql.cj.jdbc.Driver");
+    
+    con = DriverManager.getConnection(cs,user,password);
+    st = con.createStatement();
+    PreparedStatement st = con.prepareStatement("SELECT * FROM Program", 
+  ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
+    ResultSet rs = st.executeQuery();
+    
+    if(rs.last()){
+       txtProgram_ID.setText(rs.getString("Program_id")); 
+       txtProgramName.setText(rs.getString("Program_Name"));
+       txtDepartmentID.setText(rs.getString("Department_Department_id"));
+       
+    }
+    else{
+        JOptionPane.showMessageDialog(null,"Record not found");
+        txtProgram_ID.setText("");
+        txtProgram_ID.requestFocus();
+    }
+    
+    
+       
+}
+catch (SQLException ex){
+    ex.printStackTrace();
+}
+catch (ClassNotFoundException e){
+  e.printStackTrace();  
+}
+
+finally{
+    
+    try{
+        if(st != null)
+        {
+            st.close();
+        }
+        if(con != null){
+            con.close();
+        }
+    }
+        catch (SQLException ex){
+                ex.printStackTrace();
+                }
+    }
         try {
    
     
@@ -564,16 +678,16 @@ else if(answer == NO_OPTION){
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         // TODO add your handling code here:
-         Main_page ma = new Main_page();
-      ma.setVisible(true);
-      this.setVisible(true);
+        Main_page ma = new Main_page();
+        ma.setVisible(true);
+        this.setVisible(true);
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     /**
      * @param args the command line arguments
      */
-    public static void program() {
+    public static void main(String []args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

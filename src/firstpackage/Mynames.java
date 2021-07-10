@@ -3,11 +3,18 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package firstpackage;
 
 /**
  *
  * @author frank
  */
-class App {
+public class Mynames {
+    public void firstName(){
+        System.out.println("Frank");
+    }
+    public void SurnameName(){
+         System.out.println("Yiga");
+    }
     
 }

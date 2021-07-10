@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -8,6 +11,7 @@ import javax.swing.JOptionPane;
 import java.lang.NullPointerException;
 //import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
 import java.lang.NullPointerException;
+import java.net.Socket;
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
 
@@ -23,8 +27,17 @@ Connection con; //establish connection
   String records;
   Boolean bnext = false;
   Boolean bprevious = true;
+  
+  
+   ObjectOutputStream clientObjectStreamWriter;
+  ObjectInputStream clientObjectStreamReader, isReader;
+  
+  Socket sock;
+  
+  Student_SC SerialObj;
     
     public Student() {
+        go();
         initComponents();
             con = null;
     st = null;
@@ -35,6 +48,57 @@ Connection con; //establish connection
     password = "peacebewithyouall2020";
     }
 
+    public void go() {
+        try{
+            
+            sock = new Socket("127.0.0.1",50000);
+        SerialObj = new Student_SC();
+        
+        clientObjectStreamWriter = new ObjectOutputStream(sock.getOutputStream());
+        clientObjectStreamReader = new ObjectInputStream(sock.getInputStream());
+        System.out.println("networking established");
+        
+        Thread t = new Thread((Runnable) new ClientRunnable());
+
+	t.start();
+	System.out.println("got a connection");
+        }
+        catch(java.net.ConnectException e){
+            JOptionPane.showMessageDialog(null,"CONNECTION REFUSED!! SERVER DOWN MAYBE");
+            System.exit(0);
+                 } catch (IOException ex) {
+       
+    }
+    }
+    
+    public class ClientRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            try{
+                while((SerialObj =  (Student_SC)clientObjectStreamReader.readObject()) != null ){
+                    
+                   txtRegno.setText(SerialObj.regno);
+                    txtFirstName.setText(SerialObj.Fname);
+                    txtLastName.setText(SerialObj.Lname);
+                    txtStudentID.setText(SerialObj.SID);
+                    txtAddressID.setText(SerialObj.AID);
+                    txtProgramID.setText(SerialObj.PID);
+                    
+                    
+                    
+                    go();
+                }
+            }
+             catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+            catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+        }
+        
+    }
    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
@@ -139,6 +203,11 @@ Connection con; //establish connection
         getContentPane().add(lbProgramID, new org.netbeans.lib.awtextra.AbsoluteConstraints(50, 340, -1, 40));
 
         txtAddressID.setFont(new java.awt.Font("DejaVu Serif", 0, 18)); // NOI18N
+        txtAddressID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAddressIDActionPerformed(evt);
+            }
+        });
         getContentPane().add(txtAddressID, new org.netbeans.lib.awtextra.AbsoluteConstraints(180, 270, 420, 50));
 
         txtProgramID.setFont(new java.awt.Font("DejaVu Serif", 0, 18)); // NOI18N
@@ -227,7 +296,7 @@ Connection con; //establish connection
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
-String s1 =  txtRegno.getText();
+              String s1 =  txtRegno.getText();
 String s2 =  txtFirstName.getText();
 String s3 =  txtLastName.getText();
 String s4 =  txtStudentID.getText();
@@ -276,6 +345,7 @@ finally{
                 ex.printStackTrace();
                 }
     }
+
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -614,10 +684,14 @@ else if(answer == NO_OPTION){
         dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    private void txtAddressIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAddressIDActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAddressIDActionPerformed
+
     /**
      * @param args the command line arguments
      */
-    public static void student() {
+    public static void main(String []args) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.

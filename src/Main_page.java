@@ -15,7 +15,6 @@ import com.itextpdf.text.FontFactory;
 import com.itextpdf.text.Image;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Phrase;
 import com.itextpdf.text.pdf.PdfPCell;
 import com.itextpdf.text.pdf.PdfPTable;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -60,15 +59,14 @@ public class Main_page extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        kGradientPanel1 = new keeptoo.KGradientPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem6 = new javax.swing.JMenuItem();
         jMenuItem7 = new javax.swing.JMenuItem();
         jMenuItem8 = new javax.swing.JMenuItem();
         jMenuItem9 = new javax.swing.JMenuItem();
         jMenuItem10 = new javax.swing.JMenuItem();
         PROGRAM = new javax.swing.JMenuItem();
+        jMenuItem6 = new javax.swing.JMenuItem();
         studentinfomenu = new javax.swing.JMenu();
         reportFaculty = new javax.swing.JMenuItem();
         studentreport = new javax.swing.JMenuItem();
@@ -98,34 +96,11 @@ public class Main_page extends javax.swing.JFrame {
         setBackground(new java.awt.Color(33, 111, 246));
         setForeground(java.awt.Color.blue);
 
-        kGradientPanel1.setkEndColor(java.awt.Color.white);
-        kGradientPanel1.setkStartColor(java.awt.Color.blue);
-
-        javax.swing.GroupLayout kGradientPanel1Layout = new javax.swing.GroupLayout(kGradientPanel1);
-        kGradientPanel1.setLayout(kGradientPanel1Layout);
-        kGradientPanel1Layout.setHorizontalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 610, Short.MAX_VALUE)
-        );
-        kGradientPanel1Layout.setVerticalGroup(
-            kGradientPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 414, Short.MAX_VALUE)
-        );
-
         jMenuBar1.setBackground(java.awt.Color.black);
         jMenuBar1.setForeground(java.awt.Color.red);
 
         jMenu1.setText("File");
         jMenu1.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
-
-        jMenuItem6.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
-        jMenuItem6.setText("ADMITTED STUDENTS");
-        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem6ActionPerformed(evt);
-            }
-        });
-        jMenu1.add(jMenuItem6);
 
         jMenuItem7.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
         jMenuItem7.setText("ADDRESS");
@@ -171,6 +146,15 @@ public class Main_page extends javax.swing.JFrame {
             }
         });
         jMenu1.add(PROGRAM);
+
+        jMenuItem6.setFont(new java.awt.Font("DejaVu Serif", 1, 18)); // NOI18N
+        jMenuItem6.setText("ADMITTED STUDENTS");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem6);
 
         jMenuBar1.add(jMenu1);
 
@@ -373,11 +357,11 @@ public class Main_page extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 610, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(kGradientPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGap(0, 414, Short.MAX_VALUE)
         );
 
         pack();
@@ -523,7 +507,7 @@ public class Main_page extends javax.swing.JFrame {
             Logger.getLogger(Main_page.class.getName()).log(Level.SEVERE, null, ex);
         }
         try {
-            document.add(new Paragraph("    UNDERGRADUATE PRIVATE ADMISSIONS 2020/2021\n", FontFactory.getFont(FontFactory.TIMES_BOLD, 20)));
+            document.add(new Paragraph("    UNDERGRADUATE PRIVATE ADMISSIONS 2019/2020 \n", FontFactory.getFont(FontFactory.TIMES_BOLD, 20)));
         } catch (DocumentException ex) {
             Logger.getLogger(Main_page.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -570,7 +554,9 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
          
             
              Chunk glue1 = new Chunk(new VerticalPositionMark());
-                    Paragraph ptot1 = new Paragraph("Generated by: Yiga Frank",FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.ITALIC, BaseColor.BLACK));
+                    Paragraph ptot1 = new Paragraph("Generated by: Yiga Frank",
+                            FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.ITALIC, 
+                                    BaseColor.BLACK));
                     ptot1.add(new Chunk(glue1));
                     ptot1.add("Issued on: " + cal1 + "");
                     document.add(ptot1);
@@ -590,6 +576,7 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
         }
     }//GEN-LAST:event_studentreportActionPerformed
 
+    @SuppressWarnings("empty-statement")
     private void menudepartmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menudepartmentActionPerformed
         // TODO add your handling code here:
 
@@ -640,22 +627,42 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
         } catch (DocumentException ex) {
             Logger.getLogger(Main_page.class.getName()).log(Level.SEVERE, null, ex);
         }
+        float[] widths = {0.15f, 0.45f, 0.35f};
 
-        PdfPTable table = new PdfPTable(3);//create table with 2 columns
-        
+        PdfPTable table = new PdfPTable(widths);//create table with 2 columns
+        //float[] widths = {0.1f,  0.75f,0.1f};
         //table.setWidthPercentage(110);
         
 
         try {
+             
             PreparedStatement st = con.prepareStatement("select Department_id,Department_Name,"
                  + "Faculty_Name from Department INNER JOIN Faculty WHERE "
                     + "Department.Faculty_Faculty_id = Faculty.Faculty_id",
                     ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
             rs = st.executeQuery();
 
-            table.addCell("DEPARTMENT ID");
-            table.addCell("DEPARTMENT NAME");
-            table.addCell("FACULTY NAME");
+           // table.addCell("DEPARTMENT ID");
+            //table.addCell("DEPARTMENT NAME");
+            //table.addCell("FACULTY NAME");
+            
+              PdfPCell ln = new PdfPCell(new Paragraph("ID", FontFactory.getFont(
+                        FontFactory.TIMES_BOLD, 15, Font.PLAIN, BaseColor.BLUE)));
+                ln.setBackgroundColor(BaseColor.WHITE);
+                table.addCell(ln);
+                        
+                PdfPCell un = new PdfPCell(new Paragraph("DEPARTMENT NAME", FontFactory.getFont(
+                        FontFactory.TIMES_BOLD, 15, Font.PLAIN, BaseColor.BLUE)));
+                un.setBackgroundColor(BaseColor.WHITE);
+                table.addCell(un);
+                //un.setLeading(10f, 4f);
+                        
+                PdfPCell gen = new PdfPCell(new Paragraph("FACULTY NAME", 
+                        FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.PLAIN, BaseColor.BLUE)));
+                gen.setBackgroundColor(BaseColor.WHITE);
+                table.addCell(gen);
+            
+            
 
             while (rs.next()) {
                 table.addCell(rs.getString("Department_id"));
@@ -671,10 +678,12 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
          
             
              Chunk glue1 = new Chunk(new VerticalPositionMark());
-                    Paragraph ptot1 = new Paragraph("Generated by: Yiga Frank",FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.ITALIC, BaseColor.BLACK));
+                    Paragraph ptot1 = new Paragraph("Generated by:  Yiga",FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.ITALIC, BaseColor.BLACK));
                     ptot1.add(new Chunk(glue1));
                     ptot1.add("Issued on: " + cal1 + "");
                     document.add(ptot1);
+                    
+                  
 
             if (Desktop.isDesktopSupported()) {
 
@@ -1084,38 +1093,39 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
 
     private void PROGRAMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_PROGRAMActionPerformed
         // TODO add your handling code here:
-        new Program().program();
+        //new Program().program();
         dispose();
     }//GEN-LAST:event_PROGRAMActionPerformed
 
     private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
         // TODO add your handling code here:
-        new Student().student();
+      //  new Student_Server().studentS();
+       // new Student().studentC();
         dispose();
     }//GEN-LAST:event_jMenuItem6ActionPerformed
 
     private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
         // TODO add your handling code here:
-        new Faculty().faculty();
+      //  new Faculty().faculty();
         dispose();
     }//GEN-LAST:event_jMenuItem10ActionPerformed
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
         // TODO add your handling code here:
         
-       new Department().department();
+       //new Department().department();
        dispose();
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         // TODO add your handling code here:
-        new Student_info().info();
+        //new Student_info().info();
         dispose();
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // TODO add your handling code here:
-        new Address().address();
+        //new Address().address();
        dispose(); 
         
     }//GEN-LAST:event_jMenuItem7ActionPerformed
@@ -2237,8 +2247,7 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
             table.addCell("GENDER");
             table.addCell("DISTRICT");
             table.addCell("WEIGHT");
-            
-            
+              
             
 
             while (rs.next()) {
@@ -2259,7 +2268,8 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
             
              Chunk glue1 = new Chunk(new VerticalPositionMark());
                     Paragraph ptot1 = new Paragraph("Generated by: Yiga Frank",
-                            FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.ITALIC, BaseColor.BLACK));
+                            FontFactory.getFont(FontFactory.TIMES_BOLD, 15, Font.ITALIC, 
+                                    BaseColor.BLACK));
                     ptot1.add(new Chunk(glue1));
                     ptot1.add("Issued on: " + cal1 + "");
                     document.add(ptot1);
@@ -2291,6 +2301,8 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
         } catch (IOException ex) {
             Logger.getLogger(Main_page.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
     }//GEN-LAST:event_jMenuItem16ActionPerformed
 
     /**
@@ -2353,7 +2365,6 @@ DateFormat df = new SimpleDateFormat("dd/MM/yy");
     private javax.swing.JMenuItem jMenuItem7;
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
-    private keeptoo.KGradientPanel kGradientPanel1;
     private javax.swing.JMenuItem malemenu;
     private javax.swing.JMenu menucompscie;
     private javax.swing.JMenuItem menudepartment;

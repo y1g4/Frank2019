@@ -1,3 +1,6 @@
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -5,12 +8,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
 import javax.swing.JOptionPane;
-import java.lang.NullPointerException;
-//import com.mysql.jdbc.exceptions.MySQLIntegrityConstraintViolationException;
-import java.lang.NullPointerException;
+import java.net.Socket;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static javax.swing.JOptionPane.NO_OPTION;
 import static javax.swing.JOptionPane.YES_OPTION;
+
 public class Faculty extends javax.swing.JFrame {
+    
 Connection con; //establish connection
   PreparedStatement statement; //execute sql statement more of optimised
   Statement st;//execute sql statement less of optimised
@@ -22,8 +27,16 @@ Connection con; //establish connection
   String records;
   Boolean bnext = false;
   Boolean bprevious = true;
+  
+  ObjectOutputStream clientObjectStreamWriter;
+  ObjectInputStream clientObjectStreamReader, isReader;
+  
+  Socket sock;
+  
+  Faculty_SC SerialObj;
     
-    public Faculty() {
+    public Faculty() throws IOException {
+        //go();
         initComponents();
         
          con = null;
@@ -33,6 +46,53 @@ Connection con; //establish connection
     cs = "jdbc:mysql://localhost:3306/admission";
     user = "root";
     password = "peacebewithyouall2020";
+    
+    
+    }
+    public void go() throws IOException {
+        try{
+            
+            sock = new Socket("127.0.0.1",50000);
+        SerialObj = new Faculty_SC();
+        
+        clientObjectStreamWriter = new ObjectOutputStream(sock.getOutputStream());
+        clientObjectStreamReader = new ObjectInputStream(sock.getInputStream());
+        System.out.println("networking established");
+        
+        Thread t = new Thread((Runnable) new ClientRunnable());
+
+	t.start();
+	System.out.println("got a connection");
+        }
+        catch(java.net.ConnectException e){
+            JOptionPane.showMessageDialog(null,"CONNECTION REFUSED!! SERVER DOWN MAYBE");
+            System.exit(0);
+                 }
+            }
+    public class ClientRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            try{
+                while((SerialObj =  (Faculty_SC)clientObjectStreamReader.readObject()) != null ){
+                    
+                    txtFaculty_ID.setText(SerialObj.Fac_ID);
+                    txtFacultyName.setText(SerialObj. Fac_Name);
+                    
+                    System.out.print("hello ");
+                        //  clientObjectStreamReader.close();
+                          //clientObjectStreamWriter.close();
+                   // go();
+                }
+            }
+             catch (IOException ex) {
+                        ex.printStackTrace();
+                    }
+            catch (ClassNotFoundException ex) {
+                        ex.printStackTrace();
+                    }
+        }
+        
     }
 
     
@@ -55,6 +115,7 @@ Connection con; //establish connection
         jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("CLIENT");
         getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
         lblFaculty_ID.setFont(new java.awt.Font("DejaVu Serif", 1, 24)); // NOI18N
@@ -172,49 +233,31 @@ Connection con; //establish connection
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
         // TODO add your handling code here:
-String s1 =  txtFaculty_ID.getText();
-String s2 =  txtFacultyName.getText();
-
-
-try {
-    
-    Class.forName("com.mysql.cj.jdbc.Driver");//register JDBC driver
-    
-    con = DriverManager.getConnection(cs,user,password);
-    st = con.createStatement();
-    query = "INSERT INTO Faculty (Faculty_id,Faculty_Name) VALUES ('"+s1+"','"+s2+"')";
-    st. executeUpdate(query);
-    JOptionPane.showMessageDialog(null,"Record saved successfully");
-    
-    txtFaculty_ID.setText("");
-    txtFacultyName.setText("");
-    
-     
-     txtFaculty_ID.requestFocus();  //setting focus on REGNO   
-}
-catch (SQLException ex){
-    ex.printStackTrace();//displays information about SQL statement incase you typed table name or field name that is not existing
-    //it displays where the error may be
-}
-catch (ClassNotFoundException e){
-  e.printStackTrace();  //checks if the driver  is not configured
-}
-
-finally{
-    
-    try{
-        if(st != null)
-        {
-            st.close();
-        }
-        if(con != null){
-            con.close();
-        }
-    }
-        catch (SQLException ex){
-                ex.printStackTrace();
-                }
-    }
+       try{
+           SerialObj=null;
+           SerialObj = new Faculty_SC();
+           
+       SerialObj. Fac_ID=txtFaculty_ID.getText();
+        SerialObj.Fac_Name=txtFacultyName.getText();
+        
+       // SerialObj.bSave = true;
+        
+            clientObjectStreamWriter.writeObject(SerialObj);
+            //clientObjectStreamWriter.close();
+            //SerialObj.bSave = false;
+            
+            txtFaculty_ID.setText("");
+            txtFacultyName.setText("");
+            
+            
+         }
+        catch(java.net.ConnectException e){
+            JOptionPane.showMessageDialog(null,"CONNECTION REFUSED!! SERVER DOWN MAYBE");
+            ;
+            }
+            catch (IOException ex) {
+             ex.printStackTrace();
+         }
 
     }//GEN-LAST:event_btnSaveActionPerformed
 
@@ -224,83 +267,60 @@ finally{
 
     private void btnFindActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFindActionPerformed
         // TODO add your handling code here:
-        try {
-    
-    Class.forName("com.mysql.cj.jdbc.Driver");
-    
-    con = DriverManager.getConnection(cs,user,password);
-    
-    
-     PreparedStatement st = con.prepareStatement("SELECT * FROM Faculty WHERE   Faculty_id ='"+txtFaculty_ID.getText()+"'", 
-  ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-    ResultSet rs = st.executeQuery();
-    
-    if(rs.first()){
-       txtFaculty_ID.setText(rs.getString("Faculty_id")); 
-       txtFacultyName.setText(rs.getString("Faculty_Name"));
-       
-    }
-    else{
-        JOptionPane.showMessageDialog(null,"Record not found");
-         txtFaculty_ID.setText("");
-         txtFaculty_ID.requestFocus();
-    }
-    
-    
-       
-}
-catch (SQLException ex){
-    ex.printStackTrace();
-}
-catch (ClassNotFoundException e){
-  e.printStackTrace();  
-}
-
-finally{
-    
-    try{
-        if(st != null)
-        {
-            st.close();
+        
+        try{
+            SerialObj.bFind = true;
+            
+            if(txtFaculty_ID.getText().equals("")){
+               // JOptionPane.showMessageDialog(null,"Please enter Faculty name to find",JOptionPane.WARNING_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Please enter Faculty name to find","information",JOptionPane.WARNING_MESSAGE);
+                txtFaculty_ID.requestFocus();
+            }
+            else{
+                SerialObj. Fac_ID=txtFaculty_ID.getText().trim();
+                clientObjectStreamWriter.writeObject(SerialObj);
+              //  System.
+            }
+            
+            SerialObj.bFind = false;
+            
         }
-        if(con != null){
-            con.close();
+        catch(IOException ex){
+            
         }
-    }
-        catch (SQLException ex){
-                ex.printStackTrace();
-                }
-    }
-
+        
+        
+       
+        
     }//GEN-LAST:event_btnFindActionPerformed
 
     private void btnFirstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnFirstActionPerformed
         // TODO add your handling code here:
         try {
     
-    Class.forName("com.mysql.cj.jdbc.Driver");
-    
-    con = DriverManager.getConnection(cs,user,password);
-    st = con.createStatement();
-    //query = "SELECT * FROM students ";
-    //st. executeUpdate(query);
-    //JOptionPane.showMessageDialog(null,"Record saved");
-    PreparedStatement st = con.prepareStatement("SELECT * FROM Faculty", 
-  ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_UPDATABLE);
-    ResultSet rs = st.executeQuery();
+    SerialObj.bFind = true;
     
     
     
-    if(rs.first()){
-       txtFaculty_ID.setText(rs.getString("Faculty_id")); 
-       txtFacultyName.setText(rs.getString("Faculty_Name"));
+  
+        
+        try {
+            clientObjectStreamWriter.writeObject(SerialObj);
+           // clientObjectStreamReader.readObject(SerialObj);
+        } catch (IOException ex) {
+            Logger.getLogger(Faculty.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+       txtFaculty_ID.setText(rs.getString(SerialObj.Fac_ID)); 
+       txtFacultyName.setText(rs.getString(SerialObj.Fac_Name));
        
-    }
-    else{
-        JOptionPane.showMessageDialog(null,"Record not found");
-        txtFaculty_ID.setText("");
-        txtFaculty_ID.requestFocus();
-    }
+      
+       //clientObjectStreamWriter.writeObject(SerialObj);
+       // clientObjectStreamReader.readObject(SerialObj);
+       
+      // SerialObj.bFind = false;
+    
+    
     
     
        
@@ -308,25 +328,8 @@ finally{
 catch (SQLException ex){
     ex.printStackTrace();
 }
-catch (ClassNotFoundException e){
-  e.printStackTrace();  
-}
 
-finally{
-    
-    try{
-        if(st != null)
-        {
-            st.close();
-        }
-        if(con != null){
-            con.close();
-        }
-    }
-        catch (SQLException ex){
-                ex.printStackTrace();
-                }
-    }
+
     }//GEN-LAST:event_btnFirstActionPerformed
 
     private void btnNextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNextActionPerformed
@@ -532,7 +535,7 @@ else if(answer == NO_OPTION){
     /**
      * @param args the command line arguments
      */
-    public static void faculty() {
+    public static void main(String []args) throws IOException {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -557,11 +560,25 @@ else if(answer == NO_OPTION){
         //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
+        /*java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Faculty().setVisible(true);
+                try {
+                    //new Faculty().setVisible(true);
+                    Faculty t = new Faculty();
+                    t.setSize(600,600);
+                    t.setVisible(true);
+                    t.go();
+                } catch (IOException ex) {
+                    Logger.getLogger(Faculty.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
             }
-        });
+        });*/
+        
+        Faculty t = new Faculty();
+                    t.setSize(600,600);
+                    t.setVisible(true);
+                    t.go();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
